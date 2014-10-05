@@ -54,6 +54,7 @@ __all__ = ['TestResult', 'TestCase', 'TestSuite',
 __all__.extend(['getTestCaseNames', 'makeSuite', 'findTestCases'])
 
 __unittest = True
+__unittest_six = True
 
 from .result import TestResult
 from .case import (TestCase, FunctionTestCase, SkipTest, skip, skipIf,
@@ -64,6 +65,8 @@ from .loader import (TestLoader, defaultTestLoader, makeSuite, getTestCaseNames,
 from .main import TestProgram, main
 from .runner import TextTestRunner, TextTestResult
 from .signals import installHandler, registerResult, removeResult, removeHandler
+
+from .version import __version__
 
 # deprecated
 _TextTestResult = TextTestResult

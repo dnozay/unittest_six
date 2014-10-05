@@ -1,11 +1,14 @@
+
 import io
 import sys
 import textwrap
 
-from test import support
+# from test import support  # XXX
 
 import traceback
 import unittest
+
+from six import print_
 
 
 class Test_TestResult(unittest.TestCase):
@@ -228,21 +231,23 @@ class Test_TestResult(unittest.TestCase):
         self.assertIsInstance(formatted_exc, str)
 
     def test_addSubTest(self):
+        class ns(object):
+            subtest = None
         class Foo(unittest.TestCase):
             def test_1(self):
-                nonlocal subtest
+                # nonlocal subtest   # XXX: nonlocal
                 with self.subTest(foo=1):
-                    subtest = self._subtest
+                    ns.subtest = self._subtest
                     try:
                         1/0
                     except ZeroDivisionError:
                         exc_info_tuple = sys.exc_info()
                     # Register an error by hand (to check the API)
-                    result.addSubTest(test, subtest, exc_info_tuple)
+                    result.addSubTest(test, ns.subtest, exc_info_tuple)
                     # Now trigger a failure
                     self.fail("some recognizable failure")
 
-        subtest = None
+        # subtest = None
         test = Foo('test_1')
         result = unittest.TestResult()
 
@@ -255,10 +260,10 @@ class Test_TestResult(unittest.TestCase):
         self.assertEqual(result.shouldStop, False)
 
         test_case, formatted_exc = result.errors[0]
-        self.assertIs(test_case, subtest)
+        self.assertIs(test_case, ns.subtest)
         self.assertIn("ZeroDivisionError", formatted_exc)
         test_case, formatted_exc = result.failures[0]
-        self.assertIs(test_case, subtest)
+        self.assertIs(test_case, ns.subtest)
         self.assertIn("some recognizable failure", formatted_exc)
 
     def testGetDescriptionWithoutDocstring(self):
@@ -404,12 +409,12 @@ OldResult = type('OldResult', (object,), classDict)
 
 class Test_OldTestResult(unittest.TestCase):
 
-    def assertOldResultWarning(self, test, failures):
-        with support.check_warnings(("TestResult has no add.+ method,",
-                                     RuntimeWarning)):
-            result = OldResult()
-            test.run(result)
-            self.assertEqual(len(result.failures), failures)
+    # def assertOldResultWarning(self, test, failures):
+    #     with support.check_warnings(("TestResult has no add.+ method,",
+    #                                  RuntimeWarning)):
+    #         result = OldResult()
+    #         test.run(result)
+    #         self.assertEqual(len(result.failures), failures)
 
     def testOldTestResult(self):
         class Test(unittest.TestCase):
@@ -514,8 +519,8 @@ class TestOutputBuffering(unittest.TestCase):
         result._original_stdout = io.StringIO()
         result._original_stderr = io.StringIO()
 
-        print('foo')
-        print('bar', file=sys.stderr)
+        print_('foo')
+        print_('bar', file=sys.stderr)
 
         self.assertEqual(out_stream.getvalue(), 'foo\n')
         self.assertEqual(err_stream.getvalue(), 'bar\n')
@@ -558,9 +563,9 @@ class TestOutputBuffering(unittest.TestCase):
             result._original_stdout = io.StringIO()
             result._original_stderr = io.StringIO()
 
-            print('foo', file=sys.stdout)
+            print_('foo', file=sys.stdout)
             if include_error:
-                print('bar', file=sys.stderr)
+                print_('bar', file=sys.stderr)
 
 
             addFunction = getattr(result, add_attr)

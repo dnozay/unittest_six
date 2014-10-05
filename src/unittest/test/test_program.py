@@ -2,7 +2,7 @@ import io
 
 import os
 import sys
-from test import support
+from .support import captured_stderr
 import unittest
 import unittest.test
 
@@ -210,13 +210,13 @@ class TestCommandLineArgs(unittest.TestCase):
                 self.assertIs(getattr(program, attr), True)
 
                 setattr(program, attr, False)
-                with support.captured_stderr() as stderr, \
+                with captured_stderr() as stderr, \
                     self.assertRaises(SystemExit) as cm:
                     program.parseArgs([None, opt])
                 self.assertEqual(cm.exception.args, (2,))
 
                 setattr(program, attr, True)
-                with support.captured_stderr() as stderr, \
+                with captured_stderr() as stderr, \
                     self.assertRaises(SystemExit) as cm:
                     program.parseArgs([None, opt])
                 self.assertEqual(cm.exception.args, (2,))

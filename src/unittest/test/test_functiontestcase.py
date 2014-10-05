@@ -1,5 +1,4 @@
 import unittest
-
 from unittest.test.support import LoggingResult
 
 

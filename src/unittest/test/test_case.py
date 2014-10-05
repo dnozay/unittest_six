@@ -10,7 +10,7 @@ import weakref
 import inspect
 
 from copy import deepcopy
-from test import support
+# from test import support  # XXX.
 
 import unittest
 
@@ -18,7 +18,7 @@ from unittest.test.support import (
     TestEquality, TestHashing, LoggingResult, LegacyLoggingResult,
     ResultWithNoStartTestRunStopTestRun
 )
-from test.support import captured_stderr
+from .support import captured_stderr
 
 
 log_foo = logging.getLogger('foo')
@@ -1535,13 +1535,14 @@ test case
             self.assertEqual(len(result.errors), 1)
             self.assertEqual(result.testsRun, 1)
 
-    @support.cpython_only
-    def testNoCycles(self):
-        case = unittest.TestCase()
-        wr = weakref.ref(case)
-        with support.disable_gc():
-            del case
-            self.assertFalse(wr())
+    # XXX: test.support
+    # @support.cpython_only
+    # def testNoCycles(self):
+    #     case = unittest.TestCase()
+    #     wr = weakref.ref(case)
+    #     with support.disable_gc():
+    #         del case
+    #         self.assertFalse(wr())
 
     def test_no_exception_leak(self):
         # Issue #19880: TestCase.run() should not keep a reference

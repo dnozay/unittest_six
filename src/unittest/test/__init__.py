@@ -2,7 +2,6 @@ import os
 import sys
 import unittest
 
-
 here = os.path.dirname(__file__)
 loader = unittest.defaultTestLoader
 

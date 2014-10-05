@@ -536,7 +536,7 @@ class TestCase(object):
             # We need to pass an actual exception and traceback to addFailure,
             # otherwise the legacy result can choke.
             try:
-                raise _UnexpectedSuccess from None
+                raise _UnexpectedSuccess()  # XXX: from None
             except _UnexpectedSuccess:
                 result.addFailure(self, sys.exc_info())
         else:
@@ -602,7 +602,10 @@ class TestCase(object):
             # explicitly break reference cycles:
             # outcome.errors -> frame -> outcome -> outcome.errors
             # outcome.expectedFailure -> frame -> outcome -> outcome.expectedFailure
-            outcome.errors.clear()
+            try:
+                outcome.errors.clear()
+            except AttributeError:
+                outcome.errors[:] = []  # XXX: .clear()
             outcome.expectedFailure = None
 
             # clear the outcome, no more needed

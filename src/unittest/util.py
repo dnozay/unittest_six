@@ -52,7 +52,10 @@ def safe_repr(obj, short=False):
     return result[:_MAX_LENGTH] + ' [truncated]...'
 
 def strclass(cls):
-    return "%s.%s" % (cls.__module__, cls.__qualname__)
+    try:
+        return "%s.%s" % (cls.__module__, cls.__qualname___)
+    except AttributeError:
+        return "%s.%s" % (cls.__module__, cls.__name__)  # XXX: __qualname___
 
 def sorted_list_difference(expected, actual):
     """Finds elements in only one or the other of two, sorted input lists.

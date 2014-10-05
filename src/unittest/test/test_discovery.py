@@ -3,8 +3,10 @@ from os.path import abspath
 import re
 import sys
 import types
-import builtins
-from test import support
+
+from six.moves import builtins
+# from test import support  # XXX
+from .support import captured_stderr
 
 import unittest
 import unittest.test
@@ -500,7 +502,7 @@ class TestDiscovery(unittest.TestCase):
         program = TestableTestProgram()
         program.testLoader = None
 
-        with support.captured_stderr() as stderr, \
+        with captured_stderr() as stderr, \
              self.assertRaises(SystemExit) as cm:
             # too many args
             program._do_discovery(['one', 'two', 'three', 'four'])

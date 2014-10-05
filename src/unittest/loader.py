@@ -73,8 +73,9 @@ class TestLoader(object):
 
     # XXX After Python 3.5, remove backward compatibility hacks for
     # use_load_tests deprecation via *args and **kws.  See issue 16662.
-    def loadTestsFromModule(self, module, *args, pattern=None, **kws):
+    def loadTestsFromModule(self, module, *args, **kws):
         """Return a suite of all tests cases contained in the given module"""
+        pattern = kws.pop('pattern', None)
         # This method used to take an undocumented and unofficial
         # use_load_tests argument.  For backward compatibility, we still
         # accept the argument (which can also be the first position) but we
@@ -266,11 +267,11 @@ class TestLoader(object):
                     elif the_module.__name__ in sys.builtin_module_names:
                         # builtin module
                         raise TypeError('Can not use builtin modules '
-                                        'as dotted module names') from None
+                                        'as dotted module names')  # XXX: from None
                     else:
                         raise TypeError(
                             'don\'t know how to discover from {!r}'
-                            .format(the_module)) from None
+                            .format(the_module))  # XXX: from None
 
                 if set_implicit_top:
                     if not is_namespace:
@@ -374,8 +375,10 @@ class TestLoader(object):
                         # loadTestsFromModule(package) has load_tests for us.
                         continue
                     # recurse into the package
-                    yield from self._find_tests(full_path, pattern,
-                                                namespace=namespace)
+                    # XXX: yield from self._find_tests
+                    for tests in self._find_tests(full_path, pattern,
+                                                  namespace=namespace):
+                        yield tests
 
 
 defaultTestLoader = TestLoader()
